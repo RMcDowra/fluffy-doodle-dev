@@ -1,5 +1,6 @@
 console.log('im on a node server, yo');
 
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -8,7 +9,7 @@ const uri = process.env.uri;
 console.log(uri);
 
 app.use(express.static('./public/'))
-
+app.set('view engine', 'ejs')
 
 
 
@@ -34,6 +35,20 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+app.get('/mongo', async (req, res)=>{
+
+  await client.connect();
+  console.log("connected?");
+  // Send a ping to confirm a successful connection
+  let result = await client.db("reeds-db").collection("whatever-collection").find({}).toArray()
+    console.log(result);
+
+    res.render('mongo', {
+      mongoResult: result
+    });
+
+})
 
 
 app.get('/', function (req, res) {
