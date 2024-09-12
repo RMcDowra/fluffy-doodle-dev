@@ -4,7 +4,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = process.env.uri;
+const uri = `mongodb+srv://rmcdowra:${process.env.pwd}@cluster0.0bqty.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; 
 
 console.log(uri);
 
@@ -55,5 +55,21 @@ app.get('/', function (req, res) {
   // res.send('Hello World')
   res.sendFile('index.html')
 })
+
+app.get('/read', async (req,res)=> {
+
+})
+
+app.get('/insert', async (req,res)=> {
+
+  //connect to the db
+  await client.connect();
+  //point to the collection
+  await client.db("reed's-db").collection("whatever-collection").insertOne({post:'hardcoded post insert'})
+  // insert into it
+  res.render('insert');
+
+})
+
 
 app.listen(3000)
