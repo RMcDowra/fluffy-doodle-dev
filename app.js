@@ -7,7 +7,7 @@ const bodyParser = require('body-parser')
 const { urlencoded } = require('body-parser')
 const { ObjectId } = require('mongodb')
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = `mongodb+srv://rmcdowra:${process.env.pwd}@cluster0.0bqty.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; 
+const uri = `mongodb+srv://rmcdowra:${process.env.MONGO_PWD}@cluster0.0bqty.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; 
 
 console.log(uri);
 
@@ -109,6 +109,26 @@ app.post('/update/:id', async (req,res)=>{
 .then(result => {
   console.log(result); 
   res.redirect('/read');
+})
+
+});
+
+app.post('/delete/:id', async (req,res)=>{
+
+  console.log("req.parms.id: ", req.params.id)
+
+  client.connect; 
+  const collection = client.db("reeds-db").collection("whatever-collection");
+  let result = await collection.findOneAndDelete( 
+  {"_id": new ObjectId(req.params.id)})
+
+.then(result => {
+  console.log(result); 
+  res.redirect('/read');
+})
+
+  //insert into it
+
 })
 
 
