@@ -3,11 +3,15 @@ console.log('im on a node server, yo');
 require('dotenv').config()
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+const { urlencoded } = require('body-parser')
+const { ObjectId } = require('mongodb')
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://rmcdowra:${process.env.pwd}@cluster0.0bqty.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; 
 
 console.log(uri);
 
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('./public/'))
 app.set('view engine', 'ejs')
 
@@ -56,7 +60,29 @@ app.get('/', function (req, res) {
   res.sendFile('index.html')
 })
 
+app.get('/ejs', (req,res)=>{
+``
+  res.render('index', {
+    myServerVariable : "something from server"
+  });
+
+  //can you get content from client...to console? 
+})
+
 app.get('/read', async (req,res)=> {
+  console.log('in /mongo');
+  await client.connect();
+  
+  console.log('connected?');
+  // Send a ping to confirm a successful connection
+  
+  let result = await client.db("reeds-db").collection("whatever-collection")
+    .find({}).toArray(); 
+  console.log(result); 
+
+  res.render('mongo', {
+    postData : result
+  });
 
 })
 
@@ -65,11 +91,26 @@ app.get('/insert', async (req,res)=> {
   //connect to the db
   await client.connect();
   //point to the collection
-  await client.db("reed's-db").collection("whatever-collection").insertOne({post:'hardcoded post insert'})
+  await client.db("reeds-db").collection("whatever-collection").insertOne({post:'hardcoded post insert'});
+  await client.db("reeds-db").collection("whatever-collection").insertOne({ iJustMadeThisUp: 'hardcoded new key '});  
   // insert into it
   res.render('insert');
 
+});
+app.post('/update/:id', async (req,res)=>{
+
+  console.log("req.parms.id: ", req.params.id)
+
+  client.connect; 
+  const collection = client.db("reeds-db").collection("whatever-collection");
+  let result = await collection.findOneAndUpdate( 
+  {"_id": new ObjectId(req.params.id)}, { $set: {"post": "NEW POST" } }
+)
+.then(result => {
+  console.log(result); 
+  res.redirect('/read');
 })
+
 
 
 app.listen(3000)
