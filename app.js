@@ -73,7 +73,7 @@ app.get('/ejs', (req,res)=>{
 })
 
 app.get('/read', async (req,res)=> {
-  console.log('in /read');
+  console.log('in /mongo');
   await client.connect();
   
   console.log('connected?');
@@ -83,7 +83,7 @@ app.get('/read', async (req,res)=> {
     .find({}).toArray(); 
   console.log(result); 
 
-  res.render('read', {
+  res.render('mongo', {
     postData : result
   });
 
